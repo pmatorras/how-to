@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VS Code Tunnel Setup Guide</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>VS Code Tunnel Setup</h1>
+        <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">Dark Mode</button>
+    </header>
+
+    <p>This step-by-step guide explains how to securely connect to development environments using VS Code Tunnels, and avoid issues related to TSPlus.</p>
+    <p>VS Code Tunnels is a free Visual Studio extension developed by Microsoft. For more information, see <a href="https://code.visualstudio.com/docs/remote/tunnels" target="_blank">the official documentation</a>.</p>
+    <div class="info-box">
+    <h2>Create a Linux User</h2>
+    <p>
+        If you need a dedicated account to use VS Code Tunnel (to resolve GitHub configuration issues), you can create one before starting the tunnel on the remote machine.
+    </p>
+
+    <div class="info-box">
+        <strong>Note:</strong> On Ubuntu, <code>adduser</code> is the simplest way to create a regular user because it creates the home directory and guides through the initial setup.
+    </div>
+
+    <pre><code>sudo adduser USERNAME</code></pre>
+
+    <p>
+        If that user also needs admin permissions, add them to the <code>sudo</code> group:
+    </p>
+
+    <pre><code>sudo usermod -aG sudo USERNAME</code></pre>
+
+    <p>
+        After creating the user, continue with the tunnel setup steps below.
+    </p>
+    </div>
+    <h2>a) Using the VS Code Interface</h2>
+    <div class="step">
+        <h3>Step 1: Start the Tunnel on the Remote Machine</h3>
+        <p>You can start the tunnel in two ways on the host machine:</p>
+
+
+        <p>Open VS Code on the machine, click the Accounts menu (bottom left) and select <strong>Turn on Remote Tunnel Access</strong>.</p>
+        <div class="screenshot-container">
+            <img src="images/step1a.png" alt="Screenshot Step 1">
+        </div>
+        Select whether the tunnel should run only while VS Code is open, or always.
+        <div class="screenshot-container">
+            <img src="images/step1b.png" alt="Screenshot Step 1b">
+        </div>
+        Then choose the account to use for the connection (a GitHub account is recommended).
+        <div class="screenshot-container">
+            <img src="images/step1c.png" alt="Screenshot Step 1c">
+        </div>
+
+
+    </div>
+
+    <div class="step">
+        <h3>Step 2: Authenticate the Session</h3>
+        <p>The CLI will ask you to authenticate with a GitHub or Microsoft account. It will provide a device code and a URL.</p>
+        <ol>
+            <li>Go to <code>https://github.com/login/device</code></li>
+            <li>Authenticate.</li>
+        </ol>
+    </div>
+
+    <div class="step">
+        <h3>Step 3: Access Your Environment</h3>
+        <p>Once authenticated, the terminal will show a unique URL for your machine (e.g. <code>https://vscode.dev/tunnel/machine-name</code>).</p>
+
+        <p><strong>From a Web Browser:</strong></p>
+        <p>Simply open the link directly. You can code from within the browser.</p>
+
+        <p><strong>From your Local VS Code:</strong></p>
+        <ol>
+            <li>Install the <strong>Remote - Tunnels</strong> extension.</li>
+            <div class="screenshot-container">
+                <img src="images/step3a.png" alt="Screenshot Step 3a">
+            </div>
+            <li>Press <code>F1</code> and run <code>Remote - Tunnels: Connect to Tunnel...</code></li>
+                <div class="screenshot-container">
+                <img src="images/step3b.png" alt="Screenshot Step 3b">
+            </div>
+            <li>Sign in with your GitHub account.</li>
+                <div class="screenshot-container">
+                <img src="images/step3c.png" alt="Screenshot Step 3c">
+                </div>
+            <li>Select your machine from the list.</li>
+                <div class="screenshot-container">
+                <img src="images/step3d.png" alt="Screenshot Step 3d">
+                </div>
+        </ol>
+        Once done, your setup is saved and you can write and run code on your local machine as if you were on the remote one!
+        <div class="screenshot-container">
+            <img src="images/step3e.png" alt="Screenshot Step 3e">
+        </div>
+    </div>
+<div class="info-box">
+  <h3>💡 Important note on the workflow</h3>
+  <p>Once connected, your setup is saved and you can write and run code on your local machine as if you were on the remote server.
+    Keep in mind that while you can write code, use the terminal, see printouts (logs) and open images or files directly inside the VS Code editor,
+    you cannot open the Windows/Linux file explorer to view external images or documents.
+    For that, you can save generated files to a path shared between your local and remote machine (OneDrive or a shared folder on the shared server (<strong>e.g. nassimulacion</strong>)), or continue using TSPlus.</p>
+
+</div>
+
+    <h2>b) Using the CLI (Recommended for headless servers)</h2>
+    <div class="step">
+        <p>If the host machine has no graphical interface, start the tunnel from the terminal:</p>
+        <pre><code id="code1">code tunnel</code><button class="copy-btn" onclick="copyCode('code1')">Copy</button></pre>
+
+            <strong>On this first run:</strong>
+            <ol>
+                <li>Accept the license terms (if prompted).</li>
+                <li><strong>Authentication:</strong> You will be given a URL (e.g. <code>https://github.com/login/device</code>) and a code. Open it in your browser and authorise.</li>
+                <li><strong>Name:</strong> You will be asked to assign a name to the tunnel.</li>
+            </ol>
+            <p>Once connected, the process will block the terminal. <strong>Press <code>Ctrl + C</code> to stop it</strong> before continuing.</p>
+
+        <h4 style="margin-top: 1.5rem;">Run as a Background Service (Important)</h4>
+        <p>If you only use the command above, the tunnel will stop when the SSH session closes. To make it persistent and survive reboots, install it as a service:</p>
+        <pre><code id="code3">code tunnel service install</code><button class="copy-btn" onclick="copyCode('code3')">Copy</button></pre>
+        <p>You can check the logs at any time with <code>code tunnel service log</code>.</p>
+
+        <h4 style="margin-top: 1.5rem;">Keep the Service Running Overnight</h4>
+        <p>Even after installing the service, the tunnel may disconnect every morning. This happens because systemd user sessions are tied to login sessions — they stop when the user logs out or the session times out (typically after ~12 hours). The service appears to "restart on login" because logind recreates the user session at that point.</p>
+        <p>To make the user session (and the tunnel service) persistent across logouts and reboots, run the following as root:</p>
+        <pre><code id="code4">loginctl enable-linger USERNAME</code><button class="copy-btn" onclick="copyCode('code4')">Copy</button></pre>
+        <p>This tells systemd to keep the user's session alive even when no one is logged in, so the tunnel service never gets terminated overnight.</p>
+    </div>
+
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const btn = document.getElementById('themeBtn');
+            if (html.getAttribute('data-theme') === 'light') {
+                html.setAttribute('data-theme', 'dark');
+                btn.textContent = 'Light Mode';
+            } else {
+                html.setAttribute('data-theme', 'light');
+                btn.textContent = 'Dark Mode';
+            }
+        }
+
+        function copyCode(id) {
+            const text = document.getElementById(id).innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = event.target;
+                const originalText = btn.innerText;
+                btn.innerText = 'Copied!';
+                setTimeout(() => btn.innerText = originalText, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

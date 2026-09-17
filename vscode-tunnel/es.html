@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía de Configuración de VS Code Tunnel</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Configuración de VS Code Tunnel</h1>
+        <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">Modo Oscuro</button>
+    </header>
+
+    <p>Esta guía paso a paso explica cómo conectarse de forma segura a entornos de desarrollo usando VS Code Tunnels, y evitar problemas relacionados con TSPlus.</p>
+    <p>VS Code tunnels es una extension de Visual studio gratuita desarrollada por Microsoft. Para más información, consultar <a href="https://code.visualstudio.com/docs/remote/tunnels" target="_blank">La guía de la aplicación</a>.</p>
+    <div class="info-box">
+    <h2>Crear un usuario en Linux</h3>
+    <p>
+        Si necesitas una cuenta dedicada para usar VS Code Tunnel (para resolver problemas de configuración de GitHub), se puede crear antes de iniciar el túnel en la máquina remota.
+    </p>
+
+    <div class="info-box">
+        <strong>Nota:</strong> En Ubuntu, <code>adduser</code> es la opción más sencilla para crear un usuario normal porque crea el directorio personal y guía la configuración inicial. 
+    </div>
+
+    <pre><code>sudo adduser NOMBRE_USUARIO</code></pre>
+
+    <p>
+        Si ese usuario también debe tener permisos de administración, añádelo al grupo <code>sudo</code>:
+    </p>
+
+    <pre><code>sudo usermod -aG sudo NOMBRE_USUARIO</code></pre>
+
+    <p>
+        Después de crear el usuario, continúa con los pasos de configuración del túnel.
+    </p>
+    </div>
+    <h2>a) Mediante el interfaz de VScode</h2>
+    <div class="step">
+        <h3>Paso 1: Iniciar el Tunnel en la Máquina Remota</h3>
+        <p>Se puede iniciar el túnel de dos formas en la máquina host:</p>
+        
+
+        <p>Abre la interfaz de VS Code abierta en la máquina, haz clic en el menú de Cuentas (abajo a la izquierda) y selecciona <strong>Turn on Remote Tunnel Access</strong> (Activar acceso a túnel remoto).</p>
+        <div class="screenshot-container">
+            <img src="images/step1a.png" alt="Captura Paso 1">
+        </div>
+        Selecciona si requieres que corra solamente con vscode abierto o siempre
+        <div class="screenshot-container">
+            <img src="images/step1b.png" alt="Captura Paso 1b">
+        </div>
+        Y elige la de realizar la conexión (yo he utilizado la cuenta de github de CTC)
+        <div class="screenshot-container">
+            <img src="images/step1c.png" alt="Captura Paso 1c">
+        </div>
+
+
+    </div>
+
+    <div class="step">
+        <h3>Paso 2: Autentificar la Sesión</h3>
+        <p>La CLI te pedirá que te autentiques con una cuenta de GitHub o Microsoft. Te proporcionará un código de dispositivo y una URL.</p>
+        <ol>
+            <li>Ve a <code>https://github.com/login/device</code></li>
+            <li>Autentificate.</li>
+        </ol>
+    </div>
+
+    <div class="step">
+        <h3>Paso 3: Acceder a tu Entorno</h3>
+        <p>Una vez autenticado, la terminal mostrará una URL única para tu máquina (ej. <code>https://vscode.dev/tunnel/nombre-maquina</code>).</p>
+
+        <p><strong>Desde un Navegador Web:</strong></p>
+        <p>Simplemente abre el enlace directamente. Puedes programar desde el propio navegador.</p>
+
+        <p><strong>Desde tu VS Code Local:</strong></p>
+        <ol>
+            <li>Instala la extensión <strong>Remote - Tunnels</strong>.</li>
+            <div class="screenshot-container">
+                <img src="images/step3a.png" alt="Captura Paso 3a">
+            </div>
+            <li>Pulsa <code>F1</code> y ejecuta <code>Remote - Tunnels: Connect to Tunnel...</code></li>
+                <div class="screenshot-container">
+                <img src="images/step3b.png" alt="Captura Paso 3b">
+            </div>
+            <li>Conectate con tu cuenta de github.</li>
+                <div class="screenshot-container">
+                <img src="images/step3c.png" alt="Captura Paso 3c">
+                </div>
+            <li>Selecciona la máquina de la lista.</li>
+                <div class="screenshot-container">
+                <img src="images/step3d.png" alt="Captura Paso 3c">
+                </div>
+        </ol>
+        Una vez hecho esto, la configuración está guardada y puedes escribir código y ejecutarlo en tu ordenador local como si estuvieras en el ordenador en remoto!
+        <div class="screenshot-container">
+            <img src="images/step3e.png" alt="Captura Paso 3c">
+        </div>
+    </div>
+<div class="info-box">
+  <h3>💡 Nota importante sobre el flujo de trabajo</h3>
+  <p>Una vez conectado, la configuración está guardada y puedes escribir y ejecutar código en tu ordenador local como si estuvieras en el servidor remoto. 
+    Sin embargo, ten en cuenta que si bien puedes Escribir código, usar la terminal, ver <em>printouts</em> (logs) y abrir imágenes o archivos directamente dentro del propio editor de VS Code,
+    no puedes abrir el explorador de archivos de Windows/Linux para ver imágenes o documentos externos. 
+    Para eso, puedes guardar los archivos generados en una ruta compartida por el ordenador local y el remoto (OneDrive o una carpeta compartida en el servidor compartido (<strong> p. ej. nassimulacion</strong>), o seguir usando TSPlus.</li>
+
+</div>
+
+    <h2>b) Usando la CLI (Recomendado para servidores sin interfaz gráfica)</h2>
+    <div class="step">
+        <p>Si el ordenador de conexión no tiene interfaz gráfica, inicia el túnel desde la terminal:</p>
+        <pre><code id="code1">code tunnel</code><button class="copy-btn" onclick="copyCode('code1')">Copiar</button></pre>
+        
+            <strong>Durante esta primera ejecución:</strong>
+            <ol>
+                <li>Acepta los términos de licencia (si te lo pide).</li>
+                <li><strong>Autenticación:</strong> Te dará una URL (ej. <code>https://github.com/login/device</code>) y un código. Ábrelo en tu navegador y autoriza.</li>
+                <li><strong>Nombre:</strong> Te pedirá asignar un nombre al túnel.</li>
+            </ol>
+            <p>Una vez conectado, el proceso bloqueará la terminal. <strong>Presiona <code>Ctrl + C</code> para detenerlo</strong> antes de continuar.</p>
+
+        <h4 style="margin-top: 1.5rem;">Ejecutar como Servicio en Segundo Plano (Crucial)</h4>
+        <p>Si solo usas el comando anterior, el túnel caerá al cerrar la sesión SSH. Para que sea persistente y sobreviva a reinicios, instálalo como servicio:</p>
+        <pre><code id="code3">code tunnel service install</code><button class="copy-btn" onclick="copyCode('code3')">Copiar</button></pre>
+        <p>Puedes consultar los logs en cualquier momento con <code>code tunnel service log</code>.</p>
+
+        <h4 style="margin-top: 1.5rem;">Mantener el Servicio Activo por la Noche</h4>
+        <p>Incluso después de instalar el túnel como servicio, puede desconectarse, ya que las sesiones de usuario de systemd están ligadas a las sesiones de inicio, y se detienen cuando el usuario cierra sesión o la sesión expira (normalmente tras ~12 horas). El sistema se reestablece una vez se inicia sesión,porque logind recrea la sesión de usuario en ese momento.</p>
+            <p>Para evitar tener que reiniciar la sesión, se puede ejecutar lo siguiente como root:</p>
+        <pre><code id="code4">loginctl enable-linger NOMBRE_USUARIO</code><button class="copy-btn" onclick="copyCode('code4')">Copiar</button></pre>
+        <p>Esto le indica a systemd que mantenga la sesión del usuario activa aunque no haya ninguna sesión abierta, de forma que el servicio del túnel no se interrumpa.</p>
+    </div>
+
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const btn = document.getElementById('themeBtn');
+            if (html.getAttribute('data-theme') === 'light') {
+                html.setAttribute('data-theme', 'dark');
+                btn.textContent = 'Modo Claro';
+            } else {
+                html.setAttribute('data-theme', 'light');
+                btn.textContent = 'Modo Oscuro';
+            }
+        }
+
+        function copyCode(id) {
+            const text = document.getElementById(id).innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = event.target;
+                const originalText = btn.innerText;
+                btn.innerText = '¡Copiado!';
+                setTimeout(() => btn.innerText = originalText, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

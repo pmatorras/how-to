@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dev Docs</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <style>
+        .guide-grid {
+            display: grid;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .guide-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem 1.5rem;
+        }
+        .guide-card h2 {
+            margin: 0 0 0.5rem;
+            border: none;
+            padding: 0;
+            font-size: 1.1rem;
+        }
+        .guide-card p {
+            margin: 0 0 1rem;
+            font-size: 0.95rem;
+        }
+        .lang-links {
+            display: flex;
+            gap: 0.75rem;
+        }
+        .lang-links a {
+            background: var(--primary);
+            color: #fff;
+            padding: 0.35rem 0.9rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        .lang-links a:hover { filter: brightness(0.9); }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Dev Docs</h1>
+        <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">Dark Mode</button>
+    </header>
+
+    <p>Internal guides for development environment setup and tooling.</p>
+
+    <div class="guide-grid">
+        <div class="guide-card">
+            <h2>VS Code Tunnel Setup</h2>
+            <p>Connect to remote development environments securely using VS Code Tunnels, avoiding TSPlus issues.</p>
+            <div class="lang-links">
+                <a href="vscode-tunnel/en.html">English</a>
+                <a href="vscode-tunnel/es.html">Español</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const btn = document.getElementById('themeBtn');
+            if (html.getAttribute('data-theme') === 'light') {
+                html.setAttribute('data-theme', 'dark');
+                btn.textContent = 'Light Mode';
+            } else {
+                html.setAttribute('data-theme', 'light');
+                btn.textContent = 'Dark Mode';
+            }
+        }
+    </script>
+</body>
+</html>
